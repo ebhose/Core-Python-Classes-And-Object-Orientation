@@ -4,22 +4,28 @@
 class Position:
 
     def __init__(self, latitude, longitude):
-        if not (-90 <= latitude <= 90):
-            raise ValueError(f"Latitude {latitude} out of range")
-
-        if not (-180 <= latitude <= 180):
-            raise ValueError(f"Longitude {longitude} out of range")
-
-        self._latitude = latitude
-        self._longitude = longitude
+        self.latitude = latitude
+        self.longitude = longitude
 
     @property
     def latitude(self):
         return self._latitude
 
+    @latitude.setter
+    def latitude(self, value):
+        if not (-90 <= value <= 90):
+            raise ValueError(f"Latitude {value} out of range")
+        self._latitude = value
+
     @property
     def longitude(self):
         return self._longitude
+
+    @longitude.setter
+    def longitude(self, value):
+        if not (-180 <= value <= 180):
+            raise ValueError(f"Longitude {value} out of range")
+        self._longitude = value
 
     @property
     def latitude_hemisphere(self):
@@ -36,6 +42,19 @@ class Position:
         return (
             f"{abs(self.latitude)}° {self.latitude_hemisphere}, "
             f"{abs(self.longitude)}° {self.longitude_hemisphere}"
+        )
+
+    def __format__(self, format_spec):
+        component_format_spec = ".2f"
+        prefix, dot, suffix = format_spec.partition(".")
+        if dot:
+            num_decimal_places = int(suffix)
+            component_format_spec = f".{num_decimal_places}f"
+        latitude = format(abs(self.latitude), component_format_spec)
+        longitude = format(abs(self.longitude), component_format_spec)
+        return (
+            f"{latitude}° {self.latitude_hemisphere}, "
+            f"{longitude}° {self.longitude_hemisphere}"
         )
 
 
